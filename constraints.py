@@ -19,14 +19,14 @@ def add_constraint(obj, type, name = None):
     return con
 
 
-def fix_objects(obj_a, obj_b):
+def fix_objects(obj_a, obj_b, collision = False):
     name = 'fix-{0}-{1}-{2}'.format(obj_a.name, obj_b.name, np.random.random())
 
     con = add_constraint(obj_a, type = 'RIGID_BODY_JOINT', name = name)
     con.target = obj_b
 
     con.pivot_type = 'GENERIC_6_DOF'
-    con.use_linked_collision = True
+    con.use_linked_collision = not collision
     con.use_limit_x = con.use_angular_limit_x = True
     con.use_limit_y = con.use_angular_limit_y = True
     con.use_limit_z = con.use_angular_limit_z = True
