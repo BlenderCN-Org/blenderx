@@ -24,12 +24,10 @@ def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0
 
         # scale
         obj.scale = (scale, scale, scale)
-
         objs.append(obj)
 
     # update scene
     bpy.context.scene.update()
-
     return objs
 
 
@@ -37,7 +35,7 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
     scene = bpy.context.scene
 
     # add plane
-    bpy.ops.mesh.primitive_plane_add(location = (0, 0, 0))
+    bpy.ops.mesh.primitive_plane_add()
     obj = scene.objects.active
 
     # rename object
@@ -55,7 +53,31 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
 
     # update scene
     bpy.context.scene.update()
+    return obj
 
+
+def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
+    scene = bpy.context.scene
+
+    # add sphere
+    bpy.ops.mesh.primitive_uv_sphere_add()
+    obj = scene.objects.active
+
+    # rename object
+    if name is not None:
+        obj.name = name
+
+    # compute world matrix
+    trans_4x4 = Matrix.Translation(trans_vec)
+    rot_4x4 = Matrix(rot_mat).to_4x4()
+    scale_4x4 = Matrix(np.eye(4))
+    obj.matrix_world = trans_4x4 * rot_4x4 * scale_4x4
+
+    # scale
+    obj.scale = (scale, scale, scale)
+
+    # update scene
+    bpy.context.scene.update()
     return obj
 
 
@@ -70,7 +92,6 @@ def join_objects(objs, name = None):
     # rename object
     if name is not None:
         obj.name = name
-
     return obj
 
 
