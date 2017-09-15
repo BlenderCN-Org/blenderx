@@ -21,3 +21,12 @@ def add_object(model_path, rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), trans_ve
         obj.scale = (scale, scale, scale)
         obj_list.append(obj)
     return obj_list
+
+
+def set_material(obj, material):
+    scene = bpy.context.scene
+    scene.objects.active = obj
+
+    while len(obj.material_slots) > 0:
+        bpy.ops.object.material_slot_remove()
+    obj.active_material = material
