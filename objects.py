@@ -59,6 +59,20 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
     return obj
 
 
+def join_objects(objs, name = None):
+    scene = bpy.context.scene
+
+    # join objects
+    scene.objects.active = objs[0]
+    bpy.ops.object.join()
+    obj = scene.objects.active
+
+    # rename object
+    if name is not None:
+        obj.name = name
+
+    return obj
+
 
 def set_material(obj, material):
     scene = bpy.context.scene
