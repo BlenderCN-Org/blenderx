@@ -1,4 +1,6 @@
 import bpy
+import numpy as np
+
 
 def set_physics(obj, physics_type = 'RIGID_BODY', collision_type = None, mass = 1.):
     obj.game.physics_type = physics_type
@@ -26,3 +28,29 @@ def apply_impulse(obj, point, impulse, time = 0, local = False):
     bpy.ops.logic.controller_add(type = 'PYTHON', name = name + '-c')
     obj.game.controllers[name + '-c'].text = stream
     obj.game.controllers[name + '-c'].link(sensor = obj.game.sensors[name + '-s'])
+
+
+def simulate(nframes):
+    key = np.random.choice(bpy.data.objects.keys())
+    obj = bpy.data.objects[key]
+
+    scene = bpy.context.scene
+    scene.objects.active = obj
+
+    name = 'simulation-timer-{0}'.format(np.random.random())
+
+    bpy.ops.logic.sensor_add(type = 'DELAY', name = name + '-s')
+    obj.game.sensors[name + '-s'].delay = nframes
+    bpy.ops.logic.actuator_add(type = 'GAME', name = name + '-a')
+    obj.game.actuators[name + '-a'].mode = 'QUIT'
+    bpy.ops.logic.controller_add(type = 'LOGIC_AND', name = name + '-c')
+    obj.game.controllers[name + '-c'].link(
+        sensor = obj.game.sensors[name + '-s'],
+        actuator = obj.game.actuators[name + '-a']
+    )
+
+    bpy.context.scene.render.engine = 'BLENDER_GAME'
+    bpy.context.scene.game_settings.physics_step_max = 1
+    bpy.context.scene.game_settings.physics_step_sub = 50
+    bpy.context.scene.game_settings.use_animation_record = True
+    bpy.ops.view3d.game_start()
