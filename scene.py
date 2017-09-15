@@ -1,6 +1,19 @@
 import bpy
 
 
+def deselect_all_objects():
+    scene = bpy.context.scene
+
+    for obj in bpy.data.objects:
+        scene.objects.active = obj
+
+        # switch to object mode
+        bpy.ops.object.mode_set(mode = 'OBJECT')
+
+        # deselect object
+        obj.select = False
+
+
 def render_animation(out_path, frame_start, frame_end, engine = 'BLENDER_RENDER'):
     scene = bpy.context.scene
 

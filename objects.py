@@ -2,6 +2,8 @@ import bpy
 import numpy as np
 from mathutils import Matrix
 
+from .scene import deselect_all_objects
+
 
 def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
     # import object
@@ -88,6 +90,13 @@ def join_objects(objs, name = None):
     scene.objects.active = objs[0]
     bpy.ops.object.join()
     obj = scene.objects.active
+
+    # deselect all objects
+    deselect_all_objects()
+
+    # recenter object
+    obj.select = True
+    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
 
     # rename object
     if name is not None:
