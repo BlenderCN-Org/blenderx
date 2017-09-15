@@ -19,11 +19,11 @@ def add_constraint(obj, type, name = None):
     return con
 
 
-def add_fixed_constraint(source, target):
-    name = 'fixed-{0}-{1}-{2}'.format(source.name, target.name, np.random.random())
+def fix_objects(obj_a, obj_b):
+    name = 'fix-{0}-{1}-{2}'.format(obj_a.name, obj_b.name, np.random.random())
 
-    con = add_constraint(source, type = 'RIGID_BODY_JOINT', name = name)
-    con.target = target
+    con = add_constraint(obj_a, type = 'RIGID_BODY_JOINT', name = name)
+    con.target = obj_b
 
     con.pivot_type = 'GENERIC_6_DOF'
     con.use_linked_collision = True
