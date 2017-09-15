@@ -30,7 +30,7 @@ def apply_impulse(obj, point, impulse, time = 0, local = False):
     obj.game.controllers[name + '-c'].link(sensor = obj.game.sensors[name + '-s'])
 
 
-def simulate(nframes):
+def simulate_physics(nframes):
     key = np.random.choice(bpy.data.objects.keys())
     obj = bpy.data.objects[key]
 
@@ -49,8 +49,8 @@ def simulate(nframes):
         actuator = obj.game.actuators[name + '-a']
     )
 
-    bpy.context.scene.render.engine = 'BLENDER_GAME'
-    bpy.context.scene.game_settings.physics_step_max = 1
-    bpy.context.scene.game_settings.physics_step_sub = 50
-    bpy.context.scene.game_settings.use_animation_record = True
+    scene.render.engine = 'BLENDER_GAME'
+    scene.game_settings.physics_step_max = 1
+    scene.game_settings.physics_step_sub = 50
+    scene.game_settings.use_animation_record = True
     bpy.ops.view3d.game_start()

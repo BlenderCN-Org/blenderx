@@ -2,7 +2,8 @@ import bpy
 import numpy as np
 from mathutils import Matrix
 
-def add_object(model_path, rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), trans_vec = (0, 0, 0), scale = 1, name = None):
+
+def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
     # import object
     bpy.ops.import_scene.obj(filepath = model_path)
 
