@@ -28,4 +28,6 @@ def render_animation(out_path, frame_start, frame_end, engine = 'BLENDER_RENDER'
         scene.cycles.device = 'GPU'
         bpy.context.user_preferences.addons['cycles'].preferences.compute_device_type = 'CUDA'
 
+    scene.render.resolution_x = 256
+    scene.render.resolution_y = 256
     bpy.ops.render.render(animation = True)
