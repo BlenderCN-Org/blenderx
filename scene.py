@@ -19,7 +19,7 @@ def render_animation(out_path, frames, resolution = (256, 256), engine = 'BLENDE
 
     # set up frames for rendering
     if len(frames) == 1:
-        frames = (1, frames[0], 1)
+        frames = (0, frames[0], 1)
     elif len(frames) == 2:
         frames = (frames[0], frames[1], 1)
 
