@@ -14,20 +14,32 @@ def deselect_all_objects():
         obj.select = False
 
 
-def render_animation(out_path, frame_start, frame_end, engine = 'BLENDER_RENDER'):
+def render_animation(out_path, frames, resolution = (256, 256), engine = 'BLENDER_RENDER'):
     scene = bpy.context.scene
 
-    scene.render.filepath = out_path + '/'
-    scene.render.engine = engine
-    scene.frame_start = frame_start
-    scene.frame_end = frame_end
+    # set up frames for rendering
+    if len(frames) == 1:
+        frames = (1, frames[0], 1)
+    elif len(frames) == 2:
+        frames = (frames[0], frames[1], 1)
 
+    # set up resolution for rendering
+    scene.render.resolution_x = resolution[0]
+    scene.render.resolution_y = resolution[1]
+    scene.render.resolution_percentage = 100
+
+    scene.frame_start = frames[0]
+    scene.frame_end = frames[1]
+    scene.frame_step = frames[2]
+
+    # set up engine for rendering
+    scene.render.engine = engine
     if engine == 'CYCLES':
         scene.render.tile_x = 256
         scene.render.tile_y = 256
         scene.cycles.device = 'GPU'
         bpy.context.user_preferences.addons['cycles'].preferences.compute_device_type = 'CUDA'
 
-    scene.render.resolution_x = 256
-    scene.render.resolution_y = 256
+    # rendering animation
+    scene.render.filepath = out_path + '/'
     bpy.ops.render.render(animation = True)
