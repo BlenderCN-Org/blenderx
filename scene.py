@@ -14,7 +14,7 @@ def deselect_all_objects():
         obj.select = False
 
 
-def render_animation(out_path, frames, resolution = (256, 256), engine = 'BLENDER_RENDER'):
+def render_animation(out_path, frames, resolution = (256, 256), engine = 'BLENDER_RENDER', benchmark = False):
     scene = bpy.context.scene
 
     # set up frames for rendering
@@ -23,22 +23,33 @@ def render_animation(out_path, frames, resolution = (256, 256), engine = 'BLENDE
     elif len(frames) == 2:
         frames = (frames[0], frames[1], 1)
 
+    scene.frame_start = frames[0]
+    scene.frame_end = frames[1]
+    scene.frame_step = frames[2]
+
     # set up resolution for rendering
     scene.render.resolution_x = resolution[0]
     scene.render.resolution_y = resolution[1]
     scene.render.resolution_percentage = 100
 
-    scene.frame_start = frames[0]
-    scene.frame_end = frames[1]
-    scene.frame_step = frames[2]
+    # set up for benchmark rendering (higher speed yet lower quality)
+    if benchmark:
+        scene.render.use_antialiasing = False
+        scene.render.use_raytrace = False
 
     # set up engine for rendering
     scene.render.engine = engine
-    if engine == 'CYCLES':
+
+    if engine == 'BLENDER_RENDER':
+        scene.render.tile_x = 16
+        scene.render.tile_y = 16
+    elif engine == 'CYCLES':
         scene.render.tile_x = 256
         scene.render.tile_y = 256
         scene.cycles.device = 'GPU'
         bpy.context.user_preferences.addons['cycles'].preferences.compute_device_type = 'CUDA'
+    else:
+        raise NotImplementedError('Engine "%s" is not supported')
 
     # rendering animation
     scene.render.filepath = out_path + '/'
