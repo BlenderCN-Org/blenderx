@@ -37,7 +37,7 @@ def render_animation(out_path, frames, resolution = (256, 256), tile = (64, 64),
     scene.render.tile_y = tile[1]
 
     # set up engine for rendering
-    assert engine in ['BLENDER_RENDER', 'CYCLES'], 'Engine "%s" is not supported' % engine
+    assert engine in ['BLENDER_RENDER', 'CYCLES'], 'engine "%s" is not supported' % engine
     scene.render.engine = engine
 
     if engine == 'CYCLES':
