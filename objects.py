@@ -131,6 +131,13 @@ def separate_object(obj, mode = 'LOOSE'):
     for i, obj in enumerate(bpy.context.selected_objects):
         objs.append(obj)
 
+        # deselect all objects
+        deselect_all_objects()
+
+        # recenter the object
+        obj.select = True
+        bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+
     # update the scene
     bpy.context.scene.update()
     return objs
