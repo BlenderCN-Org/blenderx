@@ -117,3 +117,36 @@ def join_objects(objs, name = None):
     # update the scene
     bpy.context.scene.update()
     return obj
+
+
+def separate_object(obj, mode = 'LOOSE'):
+    # deselect all objects
+    deselect_all_objects()
+
+    # seperate the object
+    obj.select = True
+    bpy.ops.mesh.separate(type = mode)
+
+    objs = []
+    for i, obj in enumerate(bpy.context.selected_objects):
+        objs.append(obj)
+
+    # update the scene
+    bpy.context.scene.update()
+    return objs
+
+
+def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
+    scene = bpy.context.scene
+
+    # add the remesh modifier
+    scene.objects.active = obj
+    bpy.ops.object.modifier_add(type = 'REMESH')
+    obj.modifiers['Remesh'].mode = mode
+    obj.modifiers['Remesh'].octree_depth = depth
+    obj.modifiers['Remesh'].use_remove_disconnected = remove_disconnected
+
+    # apply the remesh modifier
+    scene.objects.active = obj
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+    bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Remesh')
