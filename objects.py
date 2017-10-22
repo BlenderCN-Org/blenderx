@@ -139,33 +139,37 @@ def separate_object(obj, mode = 'LOOSE'):
 def clean_object(obj):
     scene = bpy.context.scene
 
-    # deselect all objects
-    deselect_all_objects()
+    for ops, argv in [
+        # delete loose
+        (bpy.ops.mesh.delete_loose, {}),
 
-    # select the object in edit mode
-    obj.select = True
-    scene.objects.active = obj
-    bpy.ops.object.mode_set(mode = 'EDIT')
+        # remove doubles
+        (bpy.ops.mesh.remove_doubles, {}),
 
-    # select all faces, edges and vertices
-    bpy.ops.mesh.select_mode(type = 'FACE')
-    bpy.ops.mesh.select_all(action = 'SELECT')
-    bpy.ops.mesh.select_mode(type = 'EDGE')
-    bpy.ops.mesh.select_all(action = 'SELECT')
-    bpy.ops.mesh.select_mode(type = 'VERT')
-    bpy.ops.mesh.select_all(action = 'SELECT')
+        # fill holes
+        (bpy.ops.mesh.fill_holes, {}),
 
-    # delete loose
-    bpy.ops.mesh.delete_loose()
+        # recalculate normals
+        (bpy.ops.mesh.normals_make_consistent, {'inside': False})
+    ]:
+        # deselect all objects
+        deselect_all_objects()
 
-    # remove doubles
-    bpy.ops.mesh.remove_doubles()
+        # select the object in the edit mode
+        obj.select = True
+        scene.objects.active = obj
+        bpy.ops.object.mode_set(mode = 'EDIT')
 
-    # fill holes
-    bpy.ops.mesh.fill_holes()
+        # select all faces, edges and vertices
+        bpy.ops.mesh.select_mode(type = 'FACE')
+        bpy.ops.mesh.select_all(action = 'SELECT')
+        bpy.ops.mesh.select_mode(type = 'EDGE')
+        bpy.ops.mesh.select_all(action = 'SELECT')
+        bpy.ops.mesh.select_mode(type = 'VERT')
+        bpy.ops.mesh.select_all(action = 'SELECT')
 
-    # recalculate normals
-    bpy.ops.mesh.normals_make_consistent(inside = False)
+        # perform the operator on the object
+        ops(**argv)
 
 
 def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
