@@ -91,7 +91,14 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
 def join_objects(objs, name = None):
     scene = bpy.context.scene
 
-    # join the objects
+    # deselect all objects
+    deselect_all_objects()
+
+    # select the object
+    for obj in objs:
+        obj.select = True
+
+    # join the object
     scene.objects.active = objs[0]
     bpy.ops.object.join()
     obj = scene.objects.active
@@ -106,4 +113,7 @@ def join_objects(objs, name = None):
     # rename the object
     if name is not None:
         obj.name = name
+
+    # update the scene
+    bpy.context.scene.update()
     return obj
