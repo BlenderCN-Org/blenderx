@@ -108,7 +108,7 @@ def join_objects(objs, name = None):
 
     # recenter the object
     obj.select = True
-    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
+    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
 
     # rename the object
     if name is not None:
