@@ -7,10 +7,16 @@ from .scene import deselect_all_objects
 
 def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
     # import the object
-    bpy.ops.import_scene.obj(filepath = model_path)
+    if model_path.endswith('.obj'):
+        bpy.ops.import_scene.obj(filepath = model_path)
+    elif model_path.endswith('.dae'):
+        bpy.ops.wm.collada_import(filepath = model_path)
 
     objs = []
     for k, obj in enumerate(bpy.context.selected_objects):
+        if obj.type != 'MESH':
+            continue
+
         # rename the objects
         if name is not None:
             if len(bpy.context.selected_objects) == 1:
@@ -101,12 +107,3 @@ def join_objects(objs, name = None):
     if name is not None:
         obj.name = name
     return obj
-
-
-def set_material(obj, material):
-    scene = bpy.context.scene
-    scene.objects.active = obj
-
-    while len(obj.material_slots) > 0:
-        bpy.ops.object.material_slot_remove()
-    obj.active_material = material
