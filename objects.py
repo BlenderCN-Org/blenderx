@@ -6,29 +6,42 @@ from .scene import deselect_all_objects
 
 
 def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
-    # import object
-    bpy.ops.import_scene.obj(filepath = model_path)
+    # import the object
+    if model_path.endswith('.obj'):
+        bpy.ops.import_scene.obj(filepath = model_path)
+    elif model_path.endswith('.dae'):
+        bpy.ops.wm.collada_import(filepath = model_path)
+
+    # deselect all objects
+    deselect_all_objects()
 
     objs = []
     for k, obj in enumerate(bpy.context.selected_objects):
-        # rename objects
-        if name is not None:
-            if len(bpy.context.selected_objects) == 1:
-                obj.name = name
-            else:
-                obj.name = name + '-' + str(k + 1)
+        if obj.type == 'MESH':
+            obj.select = False
 
-        # compute world matrix
-        trans_4x4 = Matrix.Translation(trans_vec)
-        rot_4x4 = Matrix(rot_mat).to_4x4()
-        scale_4x4 = Matrix(np.eye(4))
-        obj.matrix_world = trans_4x4 * rot_4x4 * scale_4x4
+            # rename the objects
+            if name is not None:
+                if len(bpy.context.selected_objects) == 1:
+                    obj.name = name
+                else:
+                    obj.name = name + '-' + str(k + 1)
 
-        # scale
-        obj.scale = (scale, scale, scale)
-        objs.append(obj)
+            # compute the world matrix
+            trans_4x4 = Matrix.Translation(trans_vec)
+            rot_4x4 = Matrix(rot_mat).to_4x4()
+            obj.matrix_world = trans_4x4 * rot_4x4
 
-    # update scene
+            # scale
+            obj.scale = (scale, scale, scale)
+            objs.append(obj)
+        else:
+            obj.select = True
+
+    # remove all non-mesh objects
+    bpy.ops.object.delete()
+
+    # update the scene
     bpy.context.scene.update()
     return objs
 
@@ -36,15 +49,15 @@ def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0
 def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
     scene = bpy.context.scene
 
-    # add plane
+    # add the plane
     bpy.ops.mesh.primitive_plane_add()
     obj = scene.objects.active
 
-    # rename object
+    # rename the object
     if name is not None:
         obj.name = name
 
-    # compute world matrix
+    # compute the world matrix
     trans_4x4 = Matrix.Translation(trans_vec)
     rot_4x4 = Matrix(rot_mat).to_4x4()
     scale_4x4 = Matrix(np.eye(4))
@@ -53,7 +66,7 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
     # scale
     obj.scale = (scale, scale, scale)
 
-    # update scene
+    # update the scene
     bpy.context.scene.update()
     return obj
 
@@ -61,15 +74,15 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
 def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0), (0, 0, 1)), name = None):
     scene = bpy.context.scene
 
-    # add sphere
+    # add the sphere
     bpy.ops.mesh.primitive_uv_sphere_add()
     obj = scene.objects.active
 
-    # rename object
+    # rename the object
     if name is not None:
         obj.name = name
 
-    # compute world matrix
+    # compute the world matrix
     trans_4x4 = Matrix.Translation(trans_vec)
     rot_4x4 = Matrix(rot_mat).to_4x4()
     scale_4x4 = Matrix(np.eye(4))
@@ -78,7 +91,7 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
     # scale
     obj.scale = (scale, scale, scale)
 
-    # update scene
+    # update the scene
     bpy.context.scene.update()
     return obj
 
@@ -86,7 +99,7 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
 def join_objects(objs, name = None):
     scene = bpy.context.scene
 
-    # join objects
+    # join the objects
     scene.objects.active = objs[0]
     bpy.ops.object.join()
     obj = scene.objects.active
@@ -94,11 +107,11 @@ def join_objects(objs, name = None):
     # deselect all objects
     deselect_all_objects()
 
-    # recenter object
+    # recenter the object
     obj.select = True
     bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
 
-    # rename object
+    # rename the object
     if name is not None:
         obj.name = name
     return obj
