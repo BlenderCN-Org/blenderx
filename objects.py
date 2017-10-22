@@ -1,5 +1,4 @@
 import bpy
-import numpy as np
 from mathutils import Matrix
 
 from .scene import deselect_all_objects
@@ -14,9 +13,6 @@ def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0
 
     objs = []
     for k, obj in enumerate(bpy.context.selected_objects):
-        if obj.type != 'MESH':
-            continue
-
         # rename the objects
         if name is not None:
             if len(bpy.context.selected_objects) == 1:
@@ -52,8 +48,7 @@ def add_plane(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0),
     # compute the world matrix
     trans_4x4 = Matrix.Translation(trans_vec)
     rot_4x4 = Matrix(rot_mat).to_4x4()
-    scale_4x4 = Matrix(np.eye(4))
-    obj.matrix_world = trans_4x4 * rot_4x4 * scale_4x4
+    obj.matrix_world = trans_4x4 * rot_4x4
 
     # scale
     obj.scale = (scale, scale, scale)
@@ -77,8 +72,7 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
     # compute the world matrix
     trans_4x4 = Matrix.Translation(trans_vec)
     rot_4x4 = Matrix(rot_mat).to_4x4()
-    scale_4x4 = Matrix(np.eye(4))
-    obj.matrix_world = trans_4x4 * rot_4x4 * scale_4x4
+    obj.matrix_world = trans_4x4 * rot_4x4
 
     # scale
     obj.scale = (scale, scale, scale)
@@ -90,6 +84,9 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
 
 def join_objects(objs, name = None):
     scene = bpy.context.scene
+
+    # sanity check
+    assert all([obj.type == 'MESH' for obj in objs]), 'all objects should be mesh during joining'
 
     # deselect all objects
     deselect_all_objects()
@@ -128,15 +125,15 @@ def separate_object(obj, mode = 'LOOSE'):
     bpy.ops.mesh.separate(type = mode)
 
     objs = []
-    for i, obj in enumerate(bpy.context.selected_objects):
-        objs.append(obj)
-
+    for obj in bpy.context.selected_objects:
         # deselect all objects
         deselect_all_objects()
 
         # recenter the object
         obj.select = True
         bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+
+        objs.append(obj)
 
     # update the scene
     bpy.context.scene.update()
@@ -177,6 +174,9 @@ def clean_object(obj):
 
         # perform the operator on the object
         ops(**argv)
+
+    # update the scene
+    bpy.context.scene.update()
 
 
 def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
