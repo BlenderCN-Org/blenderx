@@ -13,7 +13,7 @@ def add_object(model_path, scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0
 
     objs = []
     for k, obj in enumerate(bpy.context.selected_objects):
-        # rename the objects
+        # rename the object
         if name is not None:
             if len(bpy.context.selected_objects) == 1:
                 obj.name = name
@@ -116,7 +116,7 @@ def join_objects(objs, name = None):
     return obj
 
 
-def separate_object(obj, mode = 'LOOSE'):
+def separate_object(obj, name = None, mode = 'LOOSE'):
     # deselect all objects
     deselect_all_objects()
 
@@ -125,7 +125,14 @@ def separate_object(obj, mode = 'LOOSE'):
     bpy.ops.mesh.separate(type = mode)
 
     objs = []
-    for obj in bpy.context.selected_objects:
+    for k, obj in enumerate(bpy.context.selected_objects):
+        # rename the object
+        if name is not None:
+            if len(bpy.context.selected_objects) == 1:
+                obj.name = name
+            else:
+                obj.name = name + '-' + str(k + 1)
+
         # deselect all objects
         deselect_all_objects()
 
