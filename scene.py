@@ -17,7 +17,19 @@ def deselect_all_objects():
         obj.select = False
 
 
-def render_depth(out_path, engine = 'CYCLES'):
+def render_image(out_path, engine = 'BLENDER_RENDER'):
+    scene = bpy.context.scene
+
+    # set up the engine for rendering
+    assert engine in ['BLENDER_RENDER', 'CYCLES'], 'engine "%s" is not supported' % engine
+    scene.render.engine = engine
+
+    # render the image
+    scene.render.filepath = out_path
+    bpy.ops.render.render(write_still = True)
+
+
+def render_depth(out_path, engine = 'BLENDER_RENDER'):
     # duplicate a new scene
     bpy.ops.scene.new(type = 'LINK_OBJECTS')
     scene = bpy.context.scene
