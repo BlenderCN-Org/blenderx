@@ -170,6 +170,9 @@ def clean_object(obj):
         # delete loose
         (bpy.ops.mesh.delete_loose, {}),
 
+        # limited dissolve
+        (bpy.ops.mesh.dissolve_limited, {}),
+
         # remove doubles
         (bpy.ops.mesh.remove_doubles, {}),
 
