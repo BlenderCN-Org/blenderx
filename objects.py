@@ -227,13 +227,13 @@ def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
 def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solver = 'CARVE'):
     scene = bpy.context.scene
 
-    # deselect all objects
-    deselect_all_objects()
-
     if retain_a:
         obj = duplicate_object(obj_a)
     else:
         obj = obj_a
+
+    # deselect all objects
+    deselect_all_objects()
 
     # add the boolean modifier
     scene.objects.active = obj
