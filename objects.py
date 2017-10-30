@@ -227,7 +227,7 @@ def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
     bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Remesh')
 
 
-def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solver = 'CARVE'):
+def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solver = 'BMESH'):
     scene = bpy.context.scene
 
     if retain_a:
