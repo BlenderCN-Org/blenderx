@@ -205,6 +205,9 @@ def clean_object(obj):
 def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
     scene = bpy.context.scene
 
+    # deselect all objects
+    deselect_all_objects()
+
     # add the remesh modifier
     scene.objects.active = obj
     bpy.ops.object.modifier_add(type = 'REMESH')
@@ -212,9 +215,12 @@ def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
     obj.modifiers['Remesh'].octree_depth = depth
     obj.modifiers['Remesh'].use_remove_disconnected = remove_disconnected
 
-    # apply the remesh modifier
+    # select the object in the edit mode
+    obj.select = True
     scene.objects.active = obj
     bpy.ops.object.mode_set(mode = 'OBJECT')
+
+    # apply the remesh modifier
     bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Remesh')
 
 
