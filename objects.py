@@ -82,6 +82,22 @@ def add_sphere(scale = 1, trans_vec = (0, 0, 0), rot_mat = ((1, 0, 0), (0, 1, 0)
     return obj
 
 
+def duplicate_object(obj):
+    scene = bpy.context.scene
+
+    # deselect all objects
+    deselect_all_objects()
+
+    # select the object
+    obj.select = True
+
+    # duplicate the object
+    bpy.ops.object.duplicate_move()
+
+    obj = scene.objects.active
+    return obj
+
+
 def join_objects(objs, name = None):
     scene = bpy.context.scene
 
@@ -200,3 +216,31 @@ def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
     scene.objects.active = obj
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Remesh')
+
+
+def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solver = 'CARVE'):
+    scene = bpy.context.scene
+
+    # deselect all objects
+    deselect_all_objects()
+
+    if retain_a:
+        obj = duplicate_object(obj_a)
+    else:
+        obj = obj_a
+
+    # add the boolean modifier
+    scene.objects.active = obj
+    bpy.ops.object.modifier_add(type = 'BOOLEAN')
+    obj.modifiers['Boolean'].operation = op
+    obj.modifiers['Boolean'].object = obj_b
+    obj.modifiers['Boolean'].solver = solver
+
+    # apply the boolean modifier
+    bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Boolean')
+
+    if not retain_b:
+        obj_b.select = True
+        bpy.ops.object.delete()
+
+    return obj

@@ -4,16 +4,14 @@ from time import time
 import bpy
 
 
-def deselect_all_objects():
+def deselect_all_objects(mode = 'OBJECT'):
     scene = bpy.context.scene
 
     for obj in bpy.data.objects:
         scene.objects.active = obj
 
-        # switch to the object mode
-        bpy.ops.object.mode_set(mode = 'OBJECT')
-
         # deselect the object
+        bpy.ops.object.mode_set(mode = mode)
         obj.select = False
 
 
