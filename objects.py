@@ -98,6 +98,18 @@ def duplicate_object(obj):
     return obj
 
 
+def recenter_object(obj, mode = 'ORIGIN_GEOMETRY', center = 'BOUNDS'):
+    # deselect all objects
+    deselect_all_objects()
+
+    # recenter the object
+    obj.select = True
+    bpy.ops.object.origin_set(type = mode, center = center)
+
+    # update the scene
+    bpy.context.scene.update()
+
+
 def join_objects(objs, name = None):
     scene = bpy.context.scene
 
@@ -116,12 +128,8 @@ def join_objects(objs, name = None):
     bpy.ops.object.join()
     obj = scene.objects.active
 
-    # deselect all objects
-    deselect_all_objects()
-
     # recenter the object
-    obj.select = True
-    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+    recenter_object(obj, mode = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
 
     # rename the object
     if name is not None:
@@ -149,12 +157,8 @@ def separate_object(obj, name = None, mode = 'LOOSE'):
             else:
                 obj.name = name + '-' + str(k + 1)
 
-        # deselect all objects
-        deselect_all_objects()
-
         # recenter the object
-        obj.select = True
-        bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+        recenter_object(obj, mode = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
 
         objs.append(obj)
 
@@ -218,7 +222,7 @@ def remesh_object(obj, mode = 'SMOOTH', depth = 8, remove_disconnected = False):
     obj.modifiers['Remesh'].octree_depth = depth
     obj.modifiers['Remesh'].use_remove_disconnected = remove_disconnected
 
-    # select the object in the edit mode
+    # select the object in the object mode
     obj.select = True
     scene.objects.active = obj
     bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -235,9 +239,6 @@ def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solv
     else:
         obj = obj_a
 
-    # deselect all objects
-    deselect_all_objects()
-
     # add the boolean modifier
     scene.objects.active = obj
     bpy.ops.object.modifier_add(type = 'BOOLEAN')
@@ -248,12 +249,11 @@ def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solv
     # apply the boolean modifier
     bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Boolean')
 
+    # recenter the object
+    recenter_object(obj, mode = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+
     # deselect all objects
     deselect_all_objects()
-
-    # recenter the object
-    obj.select = True
-    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
 
     if not retain_b:
         obj_b.select = True
