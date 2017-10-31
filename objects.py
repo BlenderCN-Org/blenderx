@@ -248,6 +248,13 @@ def boolean_operation(op, obj_a, obj_b, retain_a = False, retain_b = False, solv
     # apply the boolean modifier
     bpy.ops.object.modifier_apply(apply_as = 'DATA', modifier = 'Boolean')
 
+    # deselect all objects
+    deselect_all_objects()
+
+    # recenter the object
+    obj.select = True
+    bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY', center = 'BOUNDS')
+
     if not retain_b:
         obj_b.select = True
         bpy.ops.object.delete()
